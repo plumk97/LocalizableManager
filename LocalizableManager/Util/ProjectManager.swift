@@ -34,7 +34,13 @@ class ProjectManager: ObservableObject {
             UserDefaults.standard.set(data, forKey: "projects")
             UserDefaults.standard.synchronize()
         }
-        
+    }
+    
+    /// 删除项目对应的模块
+    /// - Parameter projectName:
+    private func deleteModule(projectName: String) {
+        UserDefaults.standard.removeObject(forKey: ModuleManager.generateCacheKey(projectName: projectName))
+        UserDefaults.standard.synchronize()
     }
 }
 
@@ -54,6 +60,7 @@ extension ProjectManager {
     
     static func removeProject(_ name: String) {
         self.shared.models.removeAll(where: { $0.name == name })
+        self.shared.deleteModule(projectName: name)
         self.shared.saveData()
     }
 }

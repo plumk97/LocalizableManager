@@ -40,7 +40,7 @@ class ModuleManager: ObservableObject {
             return
         }
 
-        if let data = UserDefaults.standard.object(forKey: "modules_" + model.name) as? Data {
+        if let data = UserDefaults.standard.object(forKey: ModuleManager.generateCacheKey(projectName: model.name)) as? Data {
 
             let decoder = PropertyListDecoder()
             if let x = try? decoder.decode([ModuleModel].self, from: data) {
@@ -57,9 +57,15 @@ class ModuleManager: ObservableObject {
         
         let encoder = PropertyListEncoder()
         if let data = try? encoder.encode(self.innerModels) {
-            UserDefaults.standard.set(data, forKey: "modules_" + model.name)
+            UserDefaults.standard.set(data, forKey: ModuleManager.generateCacheKey(projectName: model.name))
             UserDefaults.standard.synchronize()
         }
+    }
+    
+    /// 生成缓存key
+    /// - Parameter projectName: 项目名
+    static func generateCacheKey(projectName: String) -> String {
+        return "modules_" + projectName
     }
 }
 
